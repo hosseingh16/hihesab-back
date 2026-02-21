@@ -9,17 +9,17 @@ use App\Models\User;
 class AuthController extends Controller
 {
     public function register(Request $req)
-    {        
-       
+    {
+
         $fields = $req->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8'
         ]);
 
-        
 
-       
+
+
 
         $user = User::create($fields);
     }
@@ -45,6 +45,11 @@ class AuthController extends Controller
         $req->session()->invalidate();
         $req->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out']);   
+        return response()->json(['message' => 'Logged out']);
+    }
+
+    public function sendOtp(Request $req)
+    {
+        $mobileNo = $req->mobile;
     }
 }

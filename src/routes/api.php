@@ -13,3 +13,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
+Route::post('/test', function (Request $req) {
+    return $req->all();
+});
