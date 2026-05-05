@@ -1,0 +1,16 @@
+<?php
+
+return [
+    [
+        'key' => 'finance_manager',
+        'label' => 'مدیر مالی',
+    ],
+    [
+        'key' => 'accounting_supervisor',
+        'label' => 'سرپرست حسابداری',
+    ],
+    [
+        'key' => 'assistant_accountant',
+        'label' => 'کمک حسابدار',
+    ],
+];
