@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +15,28 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name')->nullable();
+            $table->string('username')->nullable();
+            $table->string('password')->nullable();
+            $table->string('email')->nullable();
+            $table->string('job_title')->nullable();
+            $table->string('company_name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('avatar')->default('image-default.png');
+            $table->string('location')->nullable();
+            $table->string('skills')->nullable();
+            $table->longText('description')->nullable();
+            $table->longText('notes')->nullable();
+            $table->string('type')->nullable();
+            $table->boolean('approved')->default(true);
+            $table->boolean('controlled')->default(false);
+            $table->boolean('archived')->default(false);
+            $table->boolean('cv_visibility')->default(true);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('last_login')->nullable();
+            $table->string('last_login_fa')->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 
