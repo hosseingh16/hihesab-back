@@ -1,0 +1,84 @@
+# Uses COMPOSE_PROJECT_NAME (default: directory name) for container names so each project gets unique containers.
+# Override DB credentials via .env: DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+services:
+  app:
+    build:
+      context: .
+      network: host
+      dockerfile: docker/php/Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      # Named volumes so chmod() works (avoids "Operation not permitted" on bind mounts e.g. Windows)
+      - storage_volume:/var/www/storage
+      - bootstrap_cache_volume:/var/www/bootstrap/cache
+      - ./docker/php/opcache.ini:/usr/local/etc/php/conf.d/99-opcache.ini
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini
+    environment:
+      APP_ENV: local
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app
+
+  web:
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"
+      - "${APP_PORT:-443}:443"
+    volumes:
+      - ./:/var/www
+      - storage_volume:/var/www/storage
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/certs:/etc/nginx/certs
+    environment:
+      - APP_URL=${APP_URL}
+    depends_on:
+      - app
+    networks:
+      - app
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-33060}:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-base}
+      MYSQL_USER: ${DB_USERNAME:-app}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - app
+    healthcheck:
+        test:
+            - CMD
+            - mysqladmin
+            - ping
+            - '-p${DB_PASSWORD}'
+        retries: 3
+        timeout: 5s
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  dbdata:
+  storage_volume:
+  bootstrap_cache_volume:
