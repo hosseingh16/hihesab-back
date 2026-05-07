@@ -1,1 +1,4 @@
-<?php echo 'OK'; ?>
+<?php
+
+declare(strict_types=1);
+echo 'OK';

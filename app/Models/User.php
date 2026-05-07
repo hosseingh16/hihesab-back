@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -23,6 +25,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     use HasRoles;
     use SoftDeletes;
+
     protected static function boot(): void
     {
         parent::boot();
@@ -39,6 +42,7 @@ class User extends Authenticatable
             }
         });
     }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -59,7 +63,6 @@ class User extends Authenticatable
 
         ];
     }
-
 
     /*
      * Relations

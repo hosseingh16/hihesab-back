@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePhoneRequest;
@@ -18,11 +20,10 @@ class AuthController extends Controller
     }
 
     /**
-     * Step 1: درخواست OTP
+     * Step 1: درخواست OTP.
      */
     public function requestOtp(StorePhoneRequest $request)
     {
-
         $mobile = $this->normalizeMobile($request->mobile);
 
         $requestId = (string) Str::uuid();
@@ -40,7 +41,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Step 2: تایید OTP + login/register
+     * Step 2: تایید OTP + login/register.
      */
     public function verifyOtp(Request $request)
     {
@@ -111,7 +112,7 @@ class AuthController extends Controller
         }
 
         if (! str_starts_with($mobile, '0')) {
-            $mobile = '0'.$mobile;
+            $mobile = '0' . $mobile;
         }
 
         return $mobile;
